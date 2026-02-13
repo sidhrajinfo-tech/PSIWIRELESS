@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Quiz App</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      display: flex;
+      justify-content: center;
+      padding-top: 40px;
+    }
+
+    .quiz-box {
+      background: white;
+      width: 420px;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 15px;
+      font-size: 14px;
+    }
+
+    .question {
+      margin-bottom: 15px;
+    }
+
+    #timer {
+      font-weight: bold;
+      color: red;
+      margin-bottom: 15px;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    #result {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<div class="quiz-box">
+  <h2>PSI Wireless Mocktest-1</h2>
+
+  <!-- ✅ NAME INPUT -->
+  <input type="text" id="username" placeholder="Enter your Full name">
+
+  <div id="timer">Time: 180 Minutes </div>
+  <form id="quizForm"></form>
+  <button id="submitBtn">Submit Quiz</button>
+  <div id="result"></div>
+</div>
+
+<!-- ✅ XML QUESTIONS (Editable) -->
+<script id="quizData" type="text/xml">
+<quiz>
+  <question>
+    <text>What is the capital of India?</text>
+    <option correct="false">Mumbai</option>
+    <option correct="false">Chennai</option>
+    <option correct="true">New Delhi</option>
+    <option correct="false">Kolkata</option>
+  </question>
+
+  <question>
+    <text>Which language runs in browser?</text>
+    <option correct="false">Python</option>
+    <option correct="true">JavaScript</option>
+    <option correct="false">C++</option>
+    <option correct="false">Java</option>
+  </question>
+
+  <question>
+    <text>2 + 2 = ?</text>
+    <option correct="false">3</option>
+    <option correct="true">4</option>
+    <option correct="false">5</option>
+    <option correct="false">6</option>
+  </question>
+
+  <question>
+    <text>HTML stands for?</text>
+    <option correct="true">HyperText Markup Language</option>
+    <option correct="false">HighText Machine Language</option>
+    <option correct="false">Hyper Tool Multi Language</option>
+    <option correct="false">None</option>
+  </question>
+
+  <question>
+    <text>Which is NOT programming language?</text>
+    <option correct="false">Java</option>
+    <option correct="false">Python</option>
+    <option correct="true">HTML</option>
+    <option correct="false">C</option>
+  </question>
+</quiz>
+</script>
+
+<script>
+/* ================= CONFIG ================= */
+
+const QUIZ_TIME_SECONDS = 60; // ⏱ Change timer here
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxJdMp_3SIPVI5L5kIJAsbkp3T9LdG1JkzIdOKO6WET1RBX2EJI3L4or2VVkXWX0wLF/exec"; 
+// 🔗 Paste Apps Script Web App URL here
+
+/* ========================================== */
+
+let questions = [];
+let timeLeft = QUIZ_TIME_SECONDS;
+let timerInterval;
+
+function loadQuizFromXML() {
+  const xmlText = document.getElementById("quizData").textContent;
+  const parser = new DOMParser();
+  const xml = parser.parseFromString(xmlText, "text/xml");
+
+  const qNodes = xml.querySelectorAll("question");
+  const form = document.getElementById("quizForm");
+
+  qNodes.forEach((qNode, index) => {
+    const text = qNode.querySelector("text").textContent;
+    const options = qNode.querySelectorAll("option");
+
+    const qObj = { text: text, options: [] };
+
+    const div = document.createElement("div");
+    div.className = "question";
+    div.innerHTML += `<p>${index + 1}. ${text}</p>`;
+
+    options.forEach((optNode, i) => {
+      const optText = optNode.textContent;
+      const isCorrect = optNode.getAttribute("correct") === "true";
+
+      qObj.options.push({ text: optText, correct: isCorrect });
+
+      div.innerHTML += `
+        <label>
+          <input type="radio" name="q${index}" value="${i}">
+          ${optText}
+        </label><br>
+      `;
+    });
+
+    questions.push(qObj);
+    form.appendChild(div);
+  });
+}
+
+function startTimer() {
+  timerInterval = setInterval(() => {
+    timeLeft--;
+
+    const minutes = String(Math.floor(timeLeft / 60)).padStart(2, '0');
+    const seconds = String(timeLeft % 60).padStart(2, '0');
+
+    document.getElementById("timer").textContent =
+      `Time: ${minutes}:${seconds}`;
+
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      submitQuiz(true);
+    }
+  }, 1000);
+}
+
+function calculateScore() {
+  let score = 0;
+
+  questions.forEach((q, index) => {
+    const selected = document.querySelector(`input[name="q${index}"]:checked`);
+    if (!selected) return;
+
+    if (q.options[selected.value].correct) score++;
+  });
+
+  return score;
+}
+
+async function sendToGoogleSheet(name, score) {
+  if (!GOOGLE_SCRIPT_URL.includes("http")) return;
+
+  const payload = { name: name, score: score };
+
+  try {
+    await fetch(GOOGLE_SCRIPT_URL, {
+      method: "POST",
+      body: JSON.stringify(payload)
+    });
+  } catch (err) {
+    console.log("Sheet Error:", err);
+  }
+}
+
+async function submitQuiz(auto = false) {
+  const name = document.getElementById("username").value.trim();
+
+  if (!name) {
+    alert("Please enter your name");
+    return;
+  }
+
+  clearInterval(timerInterval);
+
+  const score = calculateScore();
+
+  document.getElementById("result").textContent =
+    `Name: ${name} | Score: ${score}`;
+
+  await sendToGoogleSheet(name, score);
+
+  if (auto) alert("Time Up! Quiz Auto Submitted.");
+}
+
+document.getElementById("submitBtn")
+  .addEventListener("click", () => submitQuiz());
+
+loadQuizFromXML();
+startTimer();
+</script>
+
+</body>
+</html>
