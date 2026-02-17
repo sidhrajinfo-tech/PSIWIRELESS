@@ -166,9 +166,49 @@ button:hover {
     font-size: 15px;
   }
 }
+    #loadingOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(6px);
+  background: rgba(255, 255, 255, 0.6);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  z-index: 9999;
+}
+
+.loader {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #ddd;
+  border-top: 5px solid #1d3557;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 10px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+#loadingOverlay p {
+  font-size: 16px;
+  font-weight: bold;
+  color: #1d3557;
+}
   </style>
 </head>
 <body>
+
+  <!-- ✅ LOADING OVERLAY -->
+<div id="loadingOverlay">
+  <div class="loader"></div>
+  <p>Submitting Test...</p>
+</div>
 
 <div class="quiz-box">
   <h2>PSI Wireless Mocktest-1</h2>
@@ -534,13 +574,15 @@ async function submitQuiz(auto = false) {
 
   clearInterval(timerInterval);
 
+  // ✅ SHOW BLUR + LOADING
+  document.getElementById("loadingOverlay").style.display = "flex";
+
   const score = calculateScore();
 
   await sendToGoogleSheet(name, score);
 
   alert("Test submitted successfully");
 
-  // ✅ Redirect after submission
   window.location.href = "https://google.com"; 
 
   if (auto) alert("Time Up! Quiz Auto Submitted.");
@@ -555,6 +597,7 @@ startTimer();
 
 </body>
 </html>
+
 
 
 
