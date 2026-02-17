@@ -536,10 +536,12 @@ async function submitQuiz(auto = false) {
 
   const score = calculateScore();
 
-  document.getElementById("result").textContent =
-    `Name: ${name} | Score: ${score}`;
-
   await sendToGoogleSheet(name, score);
+
+  alert("Test submitted successfully");
+
+  // ✅ Redirect after submission
+  window.location.href = "https://google.com"; 
 
   if (auto) alert("Time Up! Quiz Auto Submitted.");
 }
@@ -553,6 +555,7 @@ startTimer();
 
 </body>
 </html>
+
 
 
 
