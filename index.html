@@ -470,7 +470,81 @@ button:hover {
 </script>
 
 <script>
+
+const EXAM_START = new Date("2026-02-19T22:00:00"); 
+// 👆 Apna exam date/time
+
+const EXAM_DURATION_SECONDS = 900; 
+// 10800 = 3 hours
+
+
+function startPreExamCountdown() {
+  const interval = setInterval(() => {
+    const now = new Date();
+    const diff = EXAM_START - now;
+
+    if (diff <= 0) {
+      clearInterval(interval);
+      document.body.innerHTML = ""; // Clear countdown screen
+
+      loadQuizFromXML();
+      startTimer();
+      return;
+    }
+
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const minutes = Math.floor((diff / (1000 * 60)) % 60);
+    const seconds = Math.floor((diff / 1000) % 60);
+
+    document.body.innerHTML = `
+      <div style="
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        font-family: Arial;
+        background: #f0f2f5;
+      ">
+        <h2>Exam Starts In</h2>
+        <div style="
+          font-size: 40px;
+          font-weight: bold;
+          color: red;
+          margin-top: 10px;
+        ">
+          ${String(hours).padStart(2,'0')} :
+          ${String(minutes).padStart(2,'0')} :
+          ${String(seconds).padStart(2,'0')}
+        </div>
+      </div>
+    `;
+  }, 1000);
+}
+
+function checkExamTime() {
+  const now = new Date();
+
+  if (now < EXAM_START) {
+    document.body.innerHTML = `
+      <div style="text-align:center; padding-top:50px; font-family:Arial;">
+        <h2>Quiz Not Started</h2>
+        <p>Exam will start at:</p>
+        <b>${EXAM_START}</b>
+      </div>
+    `;
+    return false;
+  }
+
+  return true;
+}
+
+
 /* ================= CONFIG ================= */
+
+
+// 👆 Yaha apna date & time set karo
+
 
 const QUIZ_TIME_SECONDS = 900; // ⏱ Change timer here
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxJdMp_3SIPVI5L5kIJAsbkp3T9LdG1JkzIdOKO6WET1RBX2EJI3L4or2VVkXWX0wLF/exec"; 
@@ -479,7 +553,7 @@ const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxJdMp_3SIPVI
 /* ========================================== */
 
 let questions = [];
-let timeLeft = QUIZ_TIME_SECONDS;
+let timeLeft = EXAM_DURATION_SECONDS;
 let timerInterval;
 
 function loadQuizFromXML() {
@@ -590,13 +664,24 @@ async function submitQuiz(auto = false) {
 
 document.getElementById("submitBtn")
   .addEventListener("click", () => submitQuiz());
+if (checkExamTime()) {
+  loadQuizFromXML();
+  startTimer();
+}
 
-loadQuizFromXML();
-startTimer();
+const now = new Date();
+
+if (now < EXAM_START) {
+  startPreExamCountdown();
+} else {
+  loadQuizFromXML();
+  startTimer();
+}
 </script>
 
 </body>
 </html>
+
 
 
 
