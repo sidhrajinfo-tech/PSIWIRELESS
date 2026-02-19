@@ -505,7 +505,7 @@ function startPreExamCountdown() {
         font-family: Arial;
         background: #f0f2f5;
       ">
-        <h2>Exam Starts In</h2>
+        <h2>Exam Starts at 22-Feb-2026 10:00 AM </h2>
         <div style="
           font-size: 40px;
           font-weight: bold;
@@ -663,10 +663,10 @@ async function submitQuiz(auto = false) {
 
 document.getElementById("submitBtn")
   .addEventListener("click", () => submitQuiz());
-if (checkExamTime()) {
-  loadQuizFromXML();
-  startTimer();
-}
+//if (checkExamTime()) {
+ // loadQuizFromXML();
+ // startTimer();
+//}
 
 const now = new Date();
 
@@ -680,6 +680,7 @@ if (now < EXAM_START) {
 
 </body>
 </html>
+
 
 
 
