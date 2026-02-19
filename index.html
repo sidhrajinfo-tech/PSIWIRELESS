@@ -663,23 +663,12 @@ async function submitQuiz(auto = false) {
 
 document.getElementById("submitBtn")
   .addEventListener("click", () => submitQuiz());
-//if (checkExamTime()) {
- // loadQuizFromXML();
- // startTimer();
-//}
 
-const now = new Date();
-
-if (now < EXAM_START) {
-  startPreExamCountdown();
-} else {
-  loadQuizFromXML();
-  startTimer();
-}
 </script>
 
 </body>
 </html>
+
 
 
 
