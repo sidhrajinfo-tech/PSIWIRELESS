@@ -672,11 +672,17 @@ if (now < EXAM_START) {
   loadQuizFromXML();
   startTimer();
 }
+document.addEventListener('contextmenu', e => e.preventDefault());
+
+document.onkeydown = function(e) {
+  if (e.keyCode == 123) return false; // F12 block
+};  
 
 </script>
 
 </body>
 </html>
+
 
 
 
