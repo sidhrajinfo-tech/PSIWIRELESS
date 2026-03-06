@@ -1843,7 +1843,7 @@ const answers = [
 2,2,0,2,1,2,2,0,2,1,
 2,2,0,2,1,2,2,0,2,2
 ]; 
-const EXAM_START = new Date("2026-03-07T10:00:00"); 
+const EXAM_START = new Date("2026-03-14T10:00:00"); 
 // 👆 Apna exam date/time
 
 const EXAM_DURATION_SECONDS = 10800; 
@@ -1908,7 +1908,7 @@ initQuiz();
     color: #333;
     margin-bottom: 25px;
   ">
-    Starts on Saturday 10:00 AM To Monday 10:00 PM
+    Starts on 14 March Saturday 10:00 AM To Monday 10:00 PM
   </h3>
 
   <div style="
@@ -1951,7 +1951,7 @@ function checkExamTime() {
 
 
 const QUIZ_TIME_SECONDS = 10800; // ⏱ Change timer here
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxJdMp_3SIPVI5L5kIJAsbkp3T9LdG1JkzIdOKO6WET1RBX2EJI3L4or2VVkXWX0wLF/exec"; 
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwWJ_qlaeL2l-LV8VU-Jw31lDvWJ_jfe8F99bbbg2O_1qVteTwVlY9lFAWbggrNpu26/exec"; 
 // 🔗 Paste Apps Script Web App URL here
 
 /* ========================================== */
@@ -1959,6 +1959,7 @@ const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxJdMp_3SIPVI
 let questions = [];
 let timeLeft = EXAM_DURATION_SECONDS;
 let timerInterval;
+
 
 function loadQuizFromXML() {
   const xmlText = document.getElementById("quizData").textContent;
@@ -2034,10 +2035,32 @@ function calculateScore() {
   return score;
 }
 
-async function sendToGoogleSheet(name, score) {
-  if (!GOOGLE_SCRIPT_URL.includes("http")) return;
+function getSelectedAnswersArray() {
 
-  const payload = { name: name, score: score };
+  let selectedAnswers = [];
+
+  for (let i = 0; i < answers.length; i++) {
+
+    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+
+    if (selected) {
+      selectedAnswers.push(selected.value);
+    } else {
+      selectedAnswers.push("NA");
+    }
+
+  }
+
+  return selectedAnswers;
+}
+
+async function sendToGoogleSheet(name, score, responses) {
+
+  const payload = {
+    name: name,
+    score: score,
+    responses: responses
+  };
 
   try {
     await fetch(GOOGLE_SCRIPT_URL, {
@@ -2051,6 +2074,7 @@ async function sendToGoogleSheet(name, score) {
 
 async function submitQuiz(auto = false) {
   const name = document.getElementById("username").value.trim();
+  const responses = getSelectedAnswersArray();
 
   if (!name) {
     alert("Please enter your name");
@@ -2064,7 +2088,7 @@ async function submitQuiz(auto = false) {
 
   const score = calculateScore();
 
-  await sendToGoogleSheet(name, score);
+  await sendToGoogleSheet(name, score, responses);
 
   alert("Test submitted successfully");
 
@@ -2094,8 +2118,6 @@ document.onkeydown = function(e) {
 
 </body>
 </html>
-
-
 
 
 
