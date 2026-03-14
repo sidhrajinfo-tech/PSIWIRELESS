@@ -200,8 +200,84 @@ button:hover {
   font-weight: bold;
   color: #1d3557;
 }
+
+.option {
+  display:flex;
+  align-items:center;
+  padding:10px;
+  border:2px solid #e5e5e5;
+  border-radius:10px;
+  margin-bottom:8px;
+  cursor:pointer;
+  transition:0.2s;
+}
+
+.option:hover{
+background:#f1f8ff;
+border-color:#457b9d;
+}
+
+.option input{
+display:none;
+}
+
+.option span{
+flex:1;
+}
+
+.option.selected{
+background:#e7f3ff;
+border-color:#1d3557;
+}
+
+.correct{
+background:#d4edda !important;
+border-color:#28a745 !important;
+}
+
+.wrong{
+background:#f8d7da !important;
+border-color:#dc3545 !important;
+}
   </style>
 </head>
+
+<div id="scorePopup" style="
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.5);
+justify-content:center;
+align-items:center;
+z-index:9999;
+">
+
+<div style="
+background:white;
+padding:30px;
+border-radius:10px;
+width:300px;
+text-align:center;
+position:relative;
+">
+
+<span id="closePopup" style="
+position:absolute;
+right:15px;
+top:10px;
+font-size:20px;
+cursor:pointer;
+">X</span>
+
+<h2>Your Score</h2>
+
+<h1 id="scoreText"></h1>
+
+</div>
+</div>
 <body>
 
   <!-- ✅ LOADING OVERLAY -->
@@ -1820,30 +1896,30 @@ button:hover {
 <script>
 const answers = [
 2,2,1,1,2,0,2,1,1,0,
-2,1,2,2,2,2,1,1,0,1,
+2,1,2,2,2,0,1,1,0,1,
 3,1,1,2,1,2,1,2,2,3,
 2,2,2,1,0,0,2,2,0,0,
 1,0,2,0,0,0,2,0,2,1,
 
-0,2,2,0,2,0,2,2,1,1,
-2,2,1,1,2,2,1,2,2,1,
-2,0,2,1,2,2,1,2,1,2,
-1,0,2,2,1,0,2,1,2,1,
-1,0,2,2,1,1,2,1,2,2,
+1,1,2,2,2,1,0,2,1,1,
+2,1,0,2,1,1,3,1,0,1,
+1,0,1,0,2,2,2,0,1,2,
+2,2,2,2,1,1,2,1,1,1,
+1,0,2,0,1,2,1,1,1,1,
 
-1,2,2,0,2,0,2,2,1,2,
-0,2,2,1,2,2,0,2,2,1,
-2,0,2,1,2,2,0,2,2,1,
-2,0,2,2,2,2,1,2,2,1,
-2,2,0,2,2,1,2,2,0,2,
+1,1,1,1,1,1,2,1,0,2,
+1,2,1,0,1,2,1,1,1,3,
+1,1,1,3,2,1,0,2,1,1,
+1,2,1,3,0,1,1,0,1,1,
+0,1,1,1,1,0,2,1,1,1,
 
-1,2,0,2,1,2,2,0,2,1,
-2,2,0,2,1,2,2,0,2,1,
-2,2,0,2,1,2,2,0,2,1,
-2,2,0,2,1,2,2,0,2,1,
-2,2,0,2,1,2,2,0,2,2
+1,1,1,1,1,1,3,3,1,1,
+1,3,0,0,0,1,1,0,1,0,
+2,0,3,0,0,3,0,0,0,1,
+1,1,1,0,0,0,0,0,0,0,
+3,0,3,0,0,0,0,3,0,0
 ]; 
-const EXAM_START = new Date("2026-03-15T10:00:00"); 
+const EXAM_START = new Date("2026-03-06T10:00:00"); 
 // 👆 Apna exam date/time
 
 const EXAM_DURATION_SECONDS = 10800; 
@@ -1980,39 +2056,53 @@ function loadQuizFromXML() {
     div.innerHTML += `<p>${index + 1}. ${text}</p>`;
 
     options.forEach((optNode, i) => {
-      const optText = optNode.textContent;
-      const isCorrect = optNode.getAttribute("correct") === "true";
+  const optText = optNode.textContent;
 
-      qObj.options.push({ text: optText, correct: isCorrect });
-
-      div.innerHTML += `
-        <label>
-          <input type="radio" name="q${index}" value="${i}">
-          ${optText}
-        </label><br>
-      `;
-    });
+  div.innerHTML += `
+<label class="option">
+<input type="radio" name="q${index}" value="${i}">
+<span>${optText}</span>
+</label>
+`;
+});
 
     questions.push(qObj);
     form.appendChild(div);
   });
 }
+document.addEventListener("change",function(e){
 
+if(e.target.type==="radio"){
+
+const labels=document.querySelectorAll(`input[name="${e.target.name}"]`);
+
+labels.forEach(el=>{
+el.parentElement.classList.remove("selected");
+});
+
+e.target.parentElement.classList.add("selected");
+
+}
+
+});
 function startTimer() {
   timerInterval = setInterval(() => {
+
     timeLeft--;
 
-    const minutes = String(Math.floor(timeLeft / 60)).padStart(2, '0');
-    const seconds = String(timeLeft % 60).padStart(2, '0');
+    const hours = String(Math.floor(timeLeft / 3600)).padStart(2,'0');
+    const minutes = String(Math.floor((timeLeft % 3600) / 60)).padStart(2,'0');
+    const seconds = String(timeLeft % 60).padStart(2,'0');
 
     document.getElementById("timer").textContent =
-      `Time: ${minutes}:${seconds}`;
+      `Time: ${hours}:${minutes}:${seconds}`;
 
     if (timeLeft <= 0) {
       clearInterval(timerInterval);
       submitQuiz(true);
     }
-  }, 1000);
+
+  },1000);
 }
 
 function calculateScore() {
@@ -2090,9 +2180,10 @@ async function submitQuiz(auto = false) {
 
   await sendToGoogleSheet(name, score, responses);
 
-  alert("Test submitted successfully");
+  document.getElementById("loadingOverlay").style.display = "none";
 
-  window.location.href = "https://google.com"; 
+  document.getElementById("scorePopup").style.display="flex";
+document.getElementById("scoreText").innerText=score;
 
   if (auto) alert("Time Up! Quiz Auto Submitted.");
 }
@@ -2111,8 +2202,46 @@ if (now < EXAM_START) {
 document.addEventListener('contextmenu', e => e.preventDefault());
 
 document.onkeydown = function(e) {
-  if (e.keyCode == 123) return false; // F12 block
-};  
+
+if(e.keyCode == 123) return false;
+
+if(e.ctrlKey && e.shiftKey && e.keyCode == 73) return false;
+
+if(e.ctrlKey && e.shiftKey && e.keyCode == 74) return false;
+
+if(e.ctrlKey && e.keyCode == 85) return false;
+
+};
+
+document.getElementById("closePopup").onclick=function(){
+
+document.getElementById("scorePopup").style.display="none";
+
+showAnswers();
+
+}
+
+function showAnswers(){
+
+for(let i=0;i<answers.length;i++){
+
+const options=document.querySelectorAll(`input[name="q${i}"]`);
+
+options.forEach(opt=>{
+
+if(Number(opt.value)===answers[i]){
+opt.parentElement.classList.add("correct");
+}
+
+if(opt.checked && Number(opt.value)!==answers[i]){
+opt.parentElement.classList.add("wrong");
+}
+
+});
+
+}
+
+}
 
 </script>
 
