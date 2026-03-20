@@ -2133,22 +2133,41 @@ function startTimer() {
 
 function calculateScore() {
 
-  let score = 0;
+let partA = 0;
+let partB = 0;
 
-  for (let i = 0; i < answers.length; i++) {
+for (let i = 0; i < answers.length; i++) {
 
-    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+const selected = document.querySelector(`input[name="q${i}"]:checked`);
 
-    if (!selected) continue;   // Unattempted → 0 marks
+if (!selected) continue;
 
-    if (Number(selected.value) === answers[i]) {
-      score += 1;              // Correct → +1
-    } else {
-      score -= 0.25;           // Wrong → -0.25
-    }
-  }
+let mark = 0;
 
-  return score;
+if (Number(selected.value) === answers[i]) {
+mark = 1;
+} else {
+mark = -0.25;
+}
+
+// Part A → Q1-80
+if (i < 80) {
+partA += mark;
+}
+
+// Part B → Q81-120
+else if (i < 120) {
+partB += mark;
+}
+
+}
+
+return {
+partA: partA,
+partB: partB,
+total: partA + partB
+};
+
 }
 
 function getSelectedAnswersArray() {
@@ -2209,7 +2228,28 @@ async function submitQuiz(auto = false) {
   document.getElementById("loadingOverlay").style.display = "none";
 
   document.getElementById("scorePopup").style.display="flex";
-document.getElementById("scoreText").innerText=score;
+let partAStatus = score.partA >= 33 ? 
+"<span style='color:green;font-weight:bold'>Qualify</span>" : 
+"<span style='color:red;font-weight:bold'>Fail</span>";
+
+let partBStatus = score.partB >= 49 ? 
+"<span style='color:green;font-weight:bold'>Qualify</span>" : 
+"<span style='color:red;font-weight:bold'>Fail</span>";
+
+document.getElementById("scoreText").innerHTML = `
+<div style="font-size:18px;margin-top:10px;line-height:1.8">
+
+Part A : <b>${score.partA}</b> ${partAStatus}<br>
+
+Part B : <b>${score.partB}</b> ${partBStatus}<br>
+
+<hr style="margin:12px 0">
+
+Total Score: 
+<b style="font-size:26px;color:#4f46e5">${score.total}</b>
+
+</div>
+`;
 
   if (auto) alert("Time Up! Quiz Auto Submitted.");
 }
