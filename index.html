@@ -1,333 +1,312 @@
 <!DOCTYPE html>
-<html>
+<html lang="gu">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quiz App</title>
+  <title>PSI Wireless Full Mocktest</title>
 
   <style>
-   
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+    :root {
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --bg: #f3f4f6;
+      --text-main: #1f2937;
+      --text-light: #6b7280;
+      --white: #ffffff;
+      --error: #ef4444;
+      --success: #10b981;
+    }
 
-body {
-  font-family: "Inter", "Segoe UI", sans-serif;
-  background: linear-gradient(135deg,#eef2ff,#f8fafc);
-  display:flex;
-  justify-content:center;
-  padding:30px;
-}
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
 
-.question p{
-font-size:16px;
-color:#1d3557;
-}
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 15px;
+    }
 
-/* ===== MAIN CONTAINER ===== */
+    /* ===== CONTAINER ===== */
+    .quiz-container {
+      background: var(--white);
+      width: 100%;
+      max-width: 700px;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      height: fit-content;
+      margin-top: 20px;
+    }
 
-.quiz-box{
-  background:white;
-  width:100%;
-  max-width:650px;
-  border-radius:18px;
-  box-shadow:0 20px 40px rgba(0,0,0,0.08);
-  padding:25px;
-  transition:0.3s;
-}
-.quiz-box:hover{
-transform:translateY(-2px);
-}
+    /* ===== HEADER & PROGRESS ===== */
+    .quiz-header {
+      padding: 20px;
+      background: var(--white);
+      border-bottom: 1px solid #e5e7eb;
+      text-align: center;
+    }
 
+    .quiz-header h2 {
+      font-size: 1.2rem;
+      color: var(--primary);
+      margin-bottom: 5px;
+    }
 
-/* ===== STICKY HEADER ===== */
+    #timer {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: var(--error);
+      margin: 10px 0;
+    }
 
-#timer {
-  position: sticky;
-  top: 0;
-  background: white;
-  padding: 12px;
-  font-weight: bold;
-  font-size: 18px;
-  color: #e63946;
-  text-align: center;
-  border-bottom: 1px solid #eee;
-  z-index: 10;
-}
+    .progress-container {
+      width: 100%;
+      height: 8px;
+      background: #e5e7eb;
+      border-radius: 10px;
+      margin-top: 15px;
+      overflow: hidden;
+    }
 
-/* ===== NAME INPUT ===== */
+    #progressBar {
+      height: 100%;
+      width: 0%;
+      background: var(--primary);
+      transition: width 0.3s ease;
+    }
 
-input[type="text"] {
-  width: 100%;
-  padding: 12px;
-  margin: 10px 0 15px 0;
-  border-radius: 10px;
-  border: 1px solid #ddd;
-  font-size: 15px;
-  outline: none;
-}
+    /* ===== NAME INPUT SECTION ===== */
+    #setupSection {
+      padding: 30px;
+      text-align: center;
+    }
 
-input[type="text"]:focus {
-  border-color: #457b9d;
-}
+    input[type="text"] {
+      width: 100%;
+      padding: 15px;
+      margin: 20px 0;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      font-size: 16px;
+      outline: none;
+      transition: border-color 0.3s;
+    }
 
-/* ===== QUESTION CARD ===== */
+    input[type="text"]:focus {
+      border-color: var(--primary);
+    }
 
-.question{
-  background:white;
-  border:1px solid #e5e7eb;
-  border-radius:12px;
-  padding:15px;
-  margin-bottom:14px;
-  transition:0.2s;
-}
+    /* ===== QUESTION SECTION ===== */
+    .question-wrapper {
+      padding: 25px;
+      min-height: 300px;
+    }
 
-.question:hover{
-border-color:#6366f1;
-box-shadow:0 6px 18px rgba(0,0,0,0.05);
-}
+    .question-card {
+      display: none; /* Hidden by default */
+      animation: fadeIn 0.4s ease;
+    }
 
-.question p{
-font-size:16px;
-font-weight:600;
-margin-bottom:12px;
-color:#1e293b;
-}
+    .question-card.active {
+      display: block;
+    }
 
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateX(20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
 
-/* ===== OPTIONS ===== */
+    .question-num {
+      color: var(--primary);
+      font-weight: bold;
+      margin-bottom: 10px;
+      display: block;
+    }
 
-label {
-  display: block;
-  padding: 8px 10px;
-  border-radius: 8px;
-  margin-bottom: 6px;
-  cursor: pointer;
-  transition: 0.15s;
-  border: 1px solid transparent;
-}
+    .question-text {
+      font-size: 1.1rem;
+      font-weight: 600;
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
 
-label:hover {
-  background: #edf6f9;
-  border-color: #dceef5;
-}
+    /* ===== OPTIONS ===== */
+    .option-label {
+      display: flex;
+      align-items: center;
+      padding: 14px 18px;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
 
-input[type="radio"] {
-  margin-right: 8px;
-  transform: scale(1.1);
-}
+    .option-label:hover {
+      background: #f9fafb;
+      border-color: #d1d5db;
+    }
 
-/* ===== BUTTON ===== */
+    .option-label.selected {
+      background: #eef2ff;
+      border-color: var(--primary);
+    }
 
-button{
-width:100%;
-padding:14px;
-border:none;
-border-radius:10px;
-background:linear-gradient(135deg,#6366f1,#4f46e5);
-color:white;
-font-weight:600;
-font-size:16px;
-cursor:pointer;
-transition:0.2s;
-}
+    .option-label input {
+      display: none;
+    }
 
-button:hover{
-transform:scale(1.02);
-}
+    .option-circle {
+      width: 20px;
+      height: 20px;
+      border: 2px solid #d1d5db;
+      border-radius: 50%;
+      margin-right: 12px;
+      position: relative;
+    }
 
-/* ===== RESULT TEXT ===== */
+    .option-label.selected .option-circle {
+      border-color: var(--primary);
+    }
 
-#result {
-  margin-top: 15px;
-  text-align: center;
-  font-weight: bold;
-  font-size: 16px;
-  color: #2a9d8f;
-}
+    .option-label.selected .option-circle::after {
+      content: '';
+      width: 10px;
+      height: 10px;
+      background: var(--primary);
+      border-radius: 50%;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
 
-/* ===== MOBILE TUNING ===== */
+    /* Result Colors */
+    .option-label.correct { background: #d1fae5 !important; border-color: #10b981 !important; }
+    .option-label.wrong { background: #fee2e2 !important; border-color: #ef4444 !important; }
 
-@media (max-width: 600px) {
+    /* ===== NAVIGATION BUTTONS ===== */
+    .quiz-footer {
+      padding: 20px;
+      display: flex;
+      gap: 15px;
+      border-top: 1px solid #e5e7eb;
+    }
 
-  body {
-    padding: 10px;
-  }
+    button {
+      flex: 1;
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+    }
 
-  .quiz-box {
-    border-radius: 10px;
-    padding: 10px;
-  }
+    .btn-next { background: var(--primary); color: white; }
+    .btn-next:hover { background: var(--primary-hover); }
 
-  #timer {
-    font-size: 16px;
-    padding: 10px;
-  }
+    .btn-prev { background: #f3f4f6; color: var(--text-main); }
+    .btn-prev:hover { background: #e5e7eb; }
+    
+    .btn-submit { background: var(--success); color: white; display: none; }
 
-  .question p {
-    font-size: 14px;
-  }
-
-  label {
-    font-size: 14px;
-  }
-
-  button {
-    font-size: 15px;
-  }
-}
+    /* ===== OVERLAYS & MODALS ===== */
     #loadingOverlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  backdrop-filter: blur(6px);
-  background: rgba(255, 255, 255, 0.6);
-  display: none;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  z-index: 9999;
-}
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(255,255,255,0.9);
+      backdrop-filter: blur(5px);
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
 
-.loader {
-  width: 50px;
-  height: 50px;
-  border: 5px solid #ddd;
-  border-top: 5px solid #1d3557;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-bottom: 10px;
-}
+    .loader {
+      width: 45px; height: 45px;
+      border: 5px solid #f3f3f3;
+      border-top: 5px solid var(--primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
 
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-#loadingOverlay p {
-  font-size: 16px;
-  font-weight: bold;
-  color: #1d3557;
-}
+    .scoreModal {
+      display: none; position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6);
+      justify-content: center; align-items: center; z-index: 9999;
+      padding: 20px;
+    }
 
-.option{
-display:flex;
-align-items:center;
-padding:12px;
-border:2px solid #e5e7eb;
-border-radius:10px;
-margin-bottom:8px;
-cursor:pointer;
-transition:0.2s;
-}
+    .scoreCard {
+      background: white; padding: 30px; border-radius: 20px;
+      text-align: center; width: 100%; max-width: 400px;
+    }
 
-.option:hover{
-border-color:#6366f1;
-background:#eef2ff;
-}
-
-.option.selected{
-background:#eef2ff;
-border-color:#6366f1;
-}
-
-.option input{
-display:none;
-}
-
-.option span{
-flex:1;
-}
-
-.option.selected{
-background:#e7f3ff;
-border-color:#1d3557;
-}
-
-.correct{
-background:#d4edda !important;
-border-color:#28a745 !important;
-}
-
-.wrong{
-background:#f8d7da !important;
-border-color:#dc3545 !important;
-}
-
-.scoreModal{
-display:none;
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,0.5);
-justify-content:center;
-align-items:center;
-z-index:9999;
-}
-
-.scoreCard{
-background:white;
-padding:35px;
-border-radius:15px;
-text-align:center;
-width:320px;
-box-shadow:0 15px 40px rgba(0,0,0,0.15);
-}
-
-.scoreCard h1{
-font-size:40px;
-margin:15px 0;
-color:#4f46e5;
-}
-
-.scoreCard button{
-margin-top:15px;
-}
+    /* ===== MOBILE ADAPTATION ===== */
+    @media (max-width: 480px) {
+      .quiz-container { margin-top: 10px; border-radius: 15px; }
+      .question-text { font-size: 1rem; }
+      button { padding: 12px; font-size: 15px; }
+    }
   </style>
 </head>
-
-<div id="scorePopup" class="scoreModal">
-
-<div class="scoreCard">
-
-<h2>Your Score</h2>
-
-<h1 id="scoreText"></h1>
-
-<button id="analyzeBtn">Analyze Your Score</button>
-
-</div>
-
-</div>
 <body>
 
-  <!-- ✅ LOADING OVERLAY -->
 <div id="loadingOverlay">
   <div class="loader"></div>
-  <p>Submitting Test...</p>
+  <p style="margin-top:15px; font-weight:bold;">તમારું પરિણામ સબમિટ થઈ રહ્યું છે...</p>
 </div>
 
-<div class="quiz-box">
-  <center><h2>PSI Wireless Full Mocktest - 1 <br>(Negative Marking :-0.25) Time : 3 Hour </h2></center>
-
-  <!-- ✅ NAME INPUT -->
-  <input type="text" id="username" placeholder="Enter your Full name">
-
-  <div id="timer">Time: 3 Hour </div>
-  <form id="quizForm"></form>
-  <button id="submitBtn">Submit Quiz</button>
-  <div id="result"></div>
+<div id="scorePopup" class="scoreModal">
+  <div class="scoreCard">
+    <h2 style="color:var(--text-main)">પરિણામ</h2>
+    <div id="scoreText"></div>
+    <button id="analyzeBtn" class="btn-next" style="margin-top:20px; width:100%">તમારા જવાબો તપાસો</button>
+  </div>
 </div>
 
-<!-- ✅ XML QUESTIONS (Editable) -->
+<div class="quiz-container">
+  <div class="quiz-header">
+    <h2>PSI Wireless Full Mocktest - 1</h2>
+    <p style="font-size: 13px; color: var(--text-light);">Negative Marking: -0.25 | Time: 3 Hours</p>
+    <div id="timer">સમય: 03:00:00</div>
+    <div class="progress-container">
+      <div id="progressBar"></div>
+    </div>
+  </div>
+
+  <div id="setupSection">
+    <h3>પરીક્ષા શરૂ કરતા પહેલા તમારું નામ લખો</h3>
+    <input type="text" id="username" placeholder="તમારું પૂરું નામ અહીં લખો">
+    <button onclick="startQuizManually()" class="btn-next">પરીક્ષા શરૂ કરો</button>
+  </div>
+
+  <form id="quizForm" class="question-wrapper" style="display:none;"></form>
+
+  <div class="quiz-footer" id="navButtons" style="display:none;">
+    <button type="button" id="prevBtn" class="btn-prev" onclick="changeQuestion(-1)">પાછળ</button>
+    <button type="button" id="nextBtn" class="btn-next" onclick="changeQuestion(1)">આગળ</button>
+    <button type="button" id="submitBtn" class="btn-submit" onclick="submitQuiz()">સબમિટ કરો</button>
+  </div>
+</div>
+
 <script id="quizData" type="text/xml">
 <quiz>
-      
 <question>
 <text>જો 5 પુરુષો 10 દિવસમાં કામ કરે તો 10 પુરુષો કેટલા દિવસમાં કરશે?</text>
 <option>2</option>
@@ -1914,419 +1893,196 @@ margin-top:15px;
 <option>Fiber only</option>
 <option>Manual mode</option>
 </question>
-
-
 </quiz>
 </script>
 
 <script>
-const answers = [
-2,2,1,1,2,0,2,1,1,0,
-2,1,2,2,2,0,1,1,0,1,
-3,1,1,2,1,2,1,2,2,3,
-2,2,2,1,0,0,2,2,0,0,
-1,0,2,0,0,0,2,0,2,1,
-
-1,1,2,2,2,1,0,2,1,1,
-2,1,0,2,1,1,3,1,0,1,
-1,0,1,0,2,2,2,0,1,2,
-2,1,1,2,1,2,1,2,1,1,
-1,0,2,0,1,2,1,1,1,1,
-
-1,1,1,1,1,1,2,1,0,2,
-1,2,1,0,1,2,1,1,1,3,
-1,1,1,3,2,1,0,2,1,1,
-1,2,1,3,0,1,1,0,1,1,
-0,1,1,1,1,0,2,1,1,1,
-
-1,1,1,1,1,1,3,3,1,1,
-1,3,0,0,0,1,1,0,1,0,
-2,0,3,0,0,3,0,0,0,1,
-1,1,1,0,0,0,0,0,0,0,
-3,0,3,0,0,0,0,3,0,0
-]; 
+// --- CONFIGURATION ---
+const answers = [2,2,1,1,2,0,2,1,1,0,2,1,2,2,2,0,1,1,0,1,3,1,1,2,1,2,1,2,2,3,2,2,2,1,0,0,2,2,0,0,1,0,2,0,0,0,2,0,2,1,1,1,2,2,2,1,0,2,1,1,2,1,0,2,1,1,3,1,0,1,1,0,1,0,2,2,2,0,1,2,2,1,1,2,1,2,1,2,1,1,1,0,2,0,1,2,1,1,1,1,1,1,1,1,1,1,2,1,0,2,1,2,1,0,1,2,1,1,1,3,1,1,1,3,2,1,0,2,1,1,1,2,1,3,0,1,1,0,1,1,0,1,1,1,1,0,2,1,1,1,1,1,1,1,1,1,3,3,1,1,1,3,0,0,0,1,1,0,1,0,2,0,3,0,0,3,0,0,0,1,1,1,1,0,0,0,0,0,0,0,3,0,3,0,0,0,0,3,0,0]; 
 const EXAM_START = new Date("2026-03-06T10:00:00"); 
-// 👆 Apna exam date/time
+const QUIZ_TIME_SECONDS = 10800; // 3 Hours
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwWJ_qlaeL2l-LV8VU-Jw31lDvWJ_jfe8F99bbbg2O_1qVteTwVlY9lFAWbggrNpu26/exec";
 
-const EXAM_DURATION_SECONDS = 10800; 
-// 10800 = 3 hours
-
-
-function startPreExamCountdown() {
-  const interval = setInterval(() => {
-    const now = new Date();
-    const diff = EXAM_START - now;
-
-    if (diff <= 0) {
-      clearInterval(interval);
-      document.body.innerHTML = ""; // Clear countdown screen
-
-      async function initQuiz() {
-  
-  loadQuizFromXML();       // Then render questions
-  startTimer();            // Then start timer
-}
-
-initQuiz();
-      return;
-    }
-
-    const hours = Math.floor(diff / (1000 * 60 * 60));
-    const minutes = Math.floor((diff / (1000 * 60)) % 60);
-    const seconds = Math.floor((diff / 1000) % 60);
-
-    document.body.innerHTML = `
-      <div style="
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  font-family: Arial;
-  background: #f0f2f5;
-  text-align: center;
-">
-
-  <h1 style="
-    font-size: 36px;
-    font-weight: bold;
-    color: #1d3557;
-    margin-bottom: 10px;
-  ">
-    PSI WIRELESS Full Mega Test for Free
-  </h1>
-<h3 style="
-    font-size: 25px;
-    font-weight: normal;
-    color: #444;
-    margin-bottom: 30px;
-  ">
-    Total Marks : 200 AND Time : 3 Hour (-0.25 Negative marking)
-  </h3>
-
-  <h3 style="
-    font-size: 22px;
-    font-weight: normal;
-    color: #333;
-    margin-bottom: 25px;
-  ">
-    Starts on 14 March Saturday 10:00 AM To Monday 10:00 PM
-  </h3>
-
-  <div style="
-    font-size: 40px;
-    font-weight: bold;
-    color: red;
-  ">
-    ${String(hours).padStart(2,'0')} :
-    ${String(minutes).padStart(2,'0')} :
-    ${String(seconds).padStart(2,'0')}
-  </div>
-
-</div>
-    `;
-  }, 1000);
-}
-
-function checkExamTime() {
-  const now = new Date();
-
-  if (now < EXAM_START) {
-    document.body.innerHTML = `
-      <div style="text-align:center; padding-top:50px; font-family:Arial;">
-        <h2>Quiz Not Started</h2>
-        <p>Exam will start at:</p>
-        <b>${EXAM_START}</b>
-      </div>
-    `;
-    return false;
-  }
-
-  return true;
-}
-
-
-/* ================= CONFIG ================= */
-
-
-// 👆 Yaha apna date & time set karo
-
-
-const QUIZ_TIME_SECONDS = 10800; // ⏱ Change timer here
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwWJ_qlaeL2l-LV8VU-Jw31lDvWJ_jfe8F99bbbg2O_1qVteTwVlY9lFAWbggrNpu26/exec"; 
-// 🔗 Paste Apps Script Web App URL here
-
-/* ========================================== */
-
-let questions = [];
-let timeLeft = EXAM_DURATION_SECONDS;
+let currentQuestion = 0;
+let totalQuestions = 0;
+let timeLeft = QUIZ_TIME_SECONDS;
 let timerInterval;
 
-
+// --- INITIALIZATION ---
 function loadQuizFromXML() {
   const xmlText = document.getElementById("quizData").textContent;
   const parser = new DOMParser();
   const xml = parser.parseFromString(xmlText, "text/xml");
-
   const qNodes = xml.querySelectorAll("question");
   const form = document.getElementById("quizForm");
+  totalQuestions = qNodes.length;
 
   qNodes.forEach((qNode, index) => {
     const text = qNode.querySelector("text").textContent;
     const options = qNode.querySelectorAll("option");
 
-    const qObj = { text: text, options: [] };
-
     const div = document.createElement("div");
-    div.className = "question";
-    div.innerHTML += `<p>${index + 1}. ${text}</p>`;
+    div.className = `question-card ${index === 0 ? 'active' : ''}`;
+    div.id = `qCard${index}`;
 
+    let optionsHTML = '';
     options.forEach((optNode, i) => {
-  const optText = optNode.textContent;
+      optionsHTML += `
+        <label class="option-label" onclick="selectOption(this, ${index})">
+          <input type="radio" name="q${index}" value="${i}">
+          <div class="option-circle"></div>
+          <span>${optNode.textContent}</span>
+        </label>`;
+    });
 
-  div.innerHTML += `
-<label class="option">
-<input type="radio" name="q${index}" value="${i}">
-<span>${optText}</span>
-</label>
-`;
-});
-
-    questions.push(qObj);
+    div.innerHTML = `
+      <span class="question-num">પ્રશ્ન ${index + 1} / ${totalQuestions}</span>
+      <p class="question-text">${text}</p>
+      <div class="options-container">${optionsHTML}</div>
+    `;
     form.appendChild(div);
   });
-}
-document.addEventListener("change",function(e){
-
-if(e.target.type==="radio"){
-
-const labels=document.querySelectorAll(`input[name="${e.target.name}"]`);
-
-labels.forEach(el=>{
-el.parentElement.classList.remove("selected");
-});
-
-e.target.parentElement.classList.add("selected");
-
+  updateProgress();
 }
 
-});
+function selectOption(el, qIdx) {
+  // UI update for selection
+  const siblings = el.parentElement.querySelectorAll('.option-label');
+  siblings.forEach(s => s.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function changeQuestion(step) {
+  const newIdx = currentQuestion + step;
+  if (newIdx >= 0 && newIdx < totalQuestions) {
+    document.getElementById(`qCard${currentQuestion}`).classList.remove('active');
+    currentQuestion = newIdx;
+    document.getElementById(`qCard${currentQuestion}`).classList.add('active');
+    
+    // Update Buttons
+    document.getElementById('prevBtn').style.visibility = currentQuestion === 0 ? 'hidden' : 'visible';
+    
+    if (currentQuestion === totalQuestions - 1) {
+      document.getElementById('nextBtn').style.display = 'none';
+      document.getElementById('submitBtn').style.display = 'block';
+    } else {
+      document.getElementById('nextBtn').style.display = 'block';
+      document.getElementById('submitBtn').style.display = 'none';
+    }
+    updateProgress();
+  }
+}
+
+function updateProgress() {
+  const prog = ((currentQuestion + 1) / totalQuestions) * 100;
+  document.getElementById('progressBar').style.width = prog + '%';
+}
+
+function startQuizManually() {
+  const name = document.getElementById("username").value.trim();
+  if (!name) {
+    alert("કૃપા કરીને તમારું નામ લખો");
+    return;
+  }
+  document.getElementById('setupSection').style.display = 'none';
+  document.getElementById('quizForm').style.display = 'block';
+  document.getElementById('navButtons').style.display = 'flex';
+  loadQuizFromXML();
+  startTimer();
+}
+
 function startTimer() {
   timerInterval = setInterval(() => {
-
     timeLeft--;
-
-    const hours = String(Math.floor(timeLeft / 3600)).padStart(2,'0');
-    const minutes = String(Math.floor((timeLeft % 3600) / 60)).padStart(2,'0');
-    const seconds = String(timeLeft % 60).padStart(2,'0');
-
-    document.getElementById("timer").textContent =
-      `Time: ${hours}:${minutes}:${seconds}`;
-
+    const h = String(Math.floor(timeLeft / 3600)).padStart(2, '0');
+    const m = String(Math.floor((timeLeft % 3600) / 60)).padStart(2, '0');
+    const s = String(timeLeft % 60).padStart(2, '0');
+    document.getElementById("timer").textContent = `સમય: ${h}:${m}:${s}`;
     if (timeLeft <= 0) {
       clearInterval(timerInterval);
       submitQuiz(true);
     }
-
-  },1000);
+  }, 1000);
 }
 
 function calculateScore() {
-
-let partA = 0;
-let partB = 0;
-
-for (let i = 0; i < answers.length; i++) {
-
-const selected = document.querySelector(`input[name="q${i}"]:checked`);
-
-if (!selected) continue;
-
-let mark = 0;
-
-if (Number(selected.value) === answers[i]) {
-mark = 1;
-} else {
-mark = -0.25;
-}
-
-// Part A → Q1-80
-if (i < 80) {
-partA += mark;
-}
-
-// Part B → Q81-120
-else if (i < 120) {
-partB += mark;
-}
-
-}
-
-return {
-partA: partA,
-partB: partB,
-total: partA + partB
-};
-
-}
-
-function getSelectedAnswersArray() {
-
-  let selectedAnswers = [];
-
+  let partA = 0, partB = 0;
   for (let i = 0; i < answers.length; i++) {
-
     const selected = document.querySelector(`input[name="q${i}"]:checked`);
-
-    if (selected) {
-      selectedAnswers.push(selected.value);
-    } else {
-      selectedAnswers.push("NA");
-    }
-
+    if (!selected) continue;
+    let mark = (Number(selected.value) === answers[i]) ? 1 : -0.25;
+    if (i < 80) partA += mark;
+    else if (i < 120) partB += mark;
   }
-
-  return selectedAnswers;
-}
-
-async function sendToGoogleSheet(name, score, responses) {
-
-  const payload = {
-    name: name,
-    score: score,
-    responses: responses
-  };
-
-  try {
-    await fetch(GOOGLE_SCRIPT_URL, {
-      method: "POST",
-      body: JSON.stringify(payload)
-    });
-  } catch (err) {
-    console.log("Sheet Error:", err);
-  }
+  return { partA, partB, total: partA + partB };
 }
 
 async function submitQuiz(auto = false) {
   const name = document.getElementById("username").value.trim();
-  const responses = getSelectedAnswersArray();
-
-  if (!name) {
-    alert("Please enter your name");
-    return;
-  }
-
   clearInterval(timerInterval);
-
-  // ✅ SHOW BLUR + LOADING
   document.getElementById("loadingOverlay").style.display = "flex";
 
   const score = calculateScore();
+  
+  // Collect all responses
+  let responses = [];
+  for (let i = 0; i < totalQuestions; i++) {
+    const sel = document.querySelector(`input[name="q${i}"]:checked`);
+    responses.push(sel ? sel.value : "NA");
+  }
 
-  await sendToGoogleSheet(name, score, responses);
+  // Send to Google Sheets
+  try {
+    await fetch(GOOGLE_SCRIPT_URL, {
+      method: "POST",
+      body: JSON.stringify({ name, score, responses })
+    });
+  } catch (e) { console.log(e); }
 
   document.getElementById("loadingOverlay").style.display = "none";
+  document.getElementById("scorePopup").style.display = "flex";
 
-  document.getElementById("scorePopup").style.display="flex";
-let partAStatus = score.partA >= 33 ? 
-"<span style='color:green;font-weight:bold'>Qualify</span>" : 
-"<span style='color:red;font-weight:bold'>Fail</span>";
+  let statusA = score.partA >= 33 ? "<span style='color:green'>Qualify</span>" : "<span style='color:red'>Fail</span>";
+  let statusB = score.partB >= 49 ? "<span style='color:green'>Qualify</span>" : "<span style='color:red'>Fail</span>";
 
-let partBStatus = score.partB >= 49 ? 
-"<span style='color:green;font-weight:bold'>Qualify</span>" : 
-"<span style='color:red;font-weight:bold'>Fail</span>";
-
-document.getElementById("scoreText").innerHTML = `
-<div style="font-size:18px;margin-top:10px;line-height:1.8">
-
-Part A : <b>${score.partA}</b> ${partAStatus}<br>
-
-Part B : <b>${score.partB}</b> ${partBStatus}<br>
-
-<hr style="margin:12px 0">
-
-Total Score: 
-<b style="font-size:26px;color:#4f46e5">${score.total}</b>
-
-</div>
-`;
-
-  if (auto) alert("Time Up! Quiz Auto Submitted.");
+  document.getElementById("scoreText").innerHTML = `
+    <div style="font-size:1.2rem; margin:20px 0; line-height:2">
+      Part A Score: <b>${score.partA}</b> (${statusA})<br>
+      Part B Score: <b>${score.partB}</b> (${statusB})<br>
+      <hr>
+      <h2 style="color:var(--primary)">Total: ${score.total}</h2>
+    </div>
+  `;
+  if(auto) alert("સમય પૂરો થઈ ગયો છે! તમારી પરીક્ષા ઓટો-સબમિટ કરવામાં આવી છે.");
 }
 
-document.getElementById("submitBtn")
-  .addEventListener("click", () => submitQuiz());
-
-  const now = new Date();
-
-if (now < EXAM_START) {
-  startPreExamCountdown();
-} else {
-  loadQuizFromXML();
-  startTimer();
+// Analyze / Show Answers logic
+document.getElementById("analyzeBtn").onclick = function() {
+  document.getElementById("scorePopup").style.display = "none";
+  showAllAnswers();
 }
+
+function showAllAnswers() {
+  // Show all questions at once for analysis
+  const cards = document.querySelectorAll('.question-card');
+  cards.forEach((card, i) => {
+    card.classList.add('active');
+    const opts = card.querySelectorAll('input');
+    opts.forEach(opt => {
+      if (Number(opt.value) === answers[i]) opt.parentElement.classList.add('correct');
+      if (opt.checked && Number(opt.value) !== answers[i]) opt.parentElement.classList.add('wrong');
+    });
+  });
+  document.getElementById('navButtons').style.display = 'none';
+  document.querySelector('.progress-container').style.display = 'none';
+}
+
+// --- SECURITY ---
 document.addEventListener('contextmenu', e => e.preventDefault());
-
-document.onkeydown = function(e) {
-
-if(e.keyCode == 123) return false;
-
-if(e.ctrlKey && e.shiftKey && e.keyCode == 73) return false;
-
-if(e.ctrlKey && e.shiftKey && e.keyCode == 74) return false;
-
-if(e.ctrlKey && e.keyCode == 85) return false;
-
+document.onkeydown = e => {
+  if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74)) || (e.ctrlKey && e.keyCode == 85)) return false;
 };
-
-document.getElementById("analyzeBtn").onclick=function(){
-
-document.getElementById("scorePopup").style.display="none";
-
-showAnswers();
-
-}
-
-function showAnswers(){
-
-for(let i=0;i<answers.length;i++){
-
-const options=document.querySelectorAll(`input[name="q${i}"]`);
-
-options.forEach(opt=>{
-
-if(Number(opt.value)===answers[i]){
-opt.parentElement.classList.add("correct");
-}
-
-if(opt.checked && Number(opt.value)!==answers[i]){
-opt.parentElement.classList.add("wrong");
-}
-
-});
-
-}
-
-}
-
 </script>
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
